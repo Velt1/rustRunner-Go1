@@ -48,7 +48,7 @@ fn main() {
                 println!("+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+");
                 println!("SN [{}]:\t{}", ucl::common::byte_print(&hstate.sn), ucl::common::decode_sn(&hstate.sn));
                 println!("Ver [{}]:\t{}", ucl::common::byte_print(&hstate.version), ucl::common::decode_version(&hstate.version));
-                println!("SOC:\t\t\t{} %", hsxtate.bms.soc);
+                println!("SOC:\t\t\t{} %", hstate.bms.soc);
                 // Implement get_voltage, get_current, and other functions if needed
                 // println!("Overall Voltage:\t{} mv", get_voltage(&hstate.bms.cell_vol));
                 // println!("Current:\t\t{} mA", get_current(&hstate.bms.current));
