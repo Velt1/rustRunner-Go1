@@ -201,7 +201,7 @@ pub fn encrypt_crc(mut crc_val: u32) -> [u8; 4] {
     let bytes = crc_val.to_le_bytes();
     [bytes[1], bytes[2], bytes[3], bytes[0]]
 }
-fn byte_print(bytes: &[u8]) -> String {
+pub fn byte_print(bytes: &[u8]) -> String {
     bytes.iter().map(|byte| format!("{:02x}", byte)).collect::<Vec<String>>().join("")
 }
 

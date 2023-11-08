@@ -67,41 +67,32 @@ impl HighCmd {
         cmd[24] = self.speed_level as u8; // Same as above
         cmd[25..29].copy_from_slice(&float_to_hex(self.foot_raise_height));
         cmd[29..33].copy_from_slice(&float_to_hex(self.body_height));
-        cmd[33..41].copy_from_slice(&float_to_hex(self.position[0]));
-        cmd[41..49].copy_from_slice(&float_to_hex(self.position[1]));
-        cmd[49..57].copy_from_slice(&float_to_hex(self.euler[0]));
-        cmd[57..65].copy_from_slice(&float_to_hex(self.euler[1]));
-        cmd[65..73].copy_from_slice(&float_to_hex(self.euler[2]));
-        cmd[73..81].copy_from_slice(&float_to_hex(self.velocity[0]));
-        cmd[81..89].copy_from_slice(&float_to_hex(self.velocity[1]));
-        cmd[89..93].copy_from_slice(&float_to_hex(self.yaw_speed));
-        cmd[93..97].copy_from_slice(&self.bms.get_bytes());
-        cmd[97..100].copy_from_slice(&self.led.get_bytes());
-        cmd[100..140].copy_from_slice(&self.wireless_remote);
-        cmd[140..144].copy_from_slice(&self.reserve);
+        cmd[33..37].copy_from_slice(&float_to_hex(self.position[0]));
+        cmd[37..41].copy_from_slice(&float_to_hex(self.position[1]));
+        cmd[41..45].copy_from_slice(&float_to_hex(self.euler[0]));
+        cmd[45..49].copy_from_slice(&float_to_hex(self.euler[1]));
+        cmd[49..53].copy_from_slice(&float_to_hex(self.euler[2]));
+        cmd[53..57].copy_from_slice(&float_to_hex(self.velocity[0]));
+        cmd[57..61].copy_from_slice(&float_to_hex(self.velocity[1]));
+        cmd[61..65].copy_from_slice(&float_to_hex(self.yaw_speed));
+        cmd[65..69].copy_from_slice(&self.bms.get_bytes());
+        cmd[69..73].copy_from_slice(&self.led.get_bytes());
+        cmd[73..113].copy_from_slice(&self.wireless_remote);
+        cmd[113..117].copy_from_slice(&self.reserve);
 
-        // 
+        let crc_part = &mut cmd[125..129]; // Last four bytes for CRC
+        let crc_value = if self.encrypt {
+            encrypt_crc(gen_crc(&cmd[..125])) // encrypt_crc and gen_crc should return [u8; 4]
+        } else {
+            gen_crc(&cmd[..125]) // gen_crc should return [u8; 4]
+        };
+        crc_part.copy_from_slice(&crc_value);
 
-        // ... conversion for floats to bytes with float_to_hex() ...
-        // Assume float_to_hex is a function that converts f32 to a 4-byte array
-
-        // Implement the conversion for foot_raise_height, body_height, etc...
-        // cmd[25..29].copy_from_slice(&float_to_hex(self.foot_raise_height));
-        // ...
-
-        // You would continue filling in the command with the correct values converted
-        // to byte arrays here...
-
-        // Calculate the CRC if needed and apply encryption
-        if let Some(crc) = self.crc.as_ref() {
-            cmd[125..].copy_from_slice(crc);
-        }
-
+        // Debug printing
         if debug {
-            // Debug printing can be done using eprintln! or logging facilities
             eprintln!("Send Data ({}): {:?}", cmd.len(), cmd);
         }
-        
+
         cmd
     }
 }
